@@ -57,8 +57,14 @@ if(mysqli_num_rows($result) > 0)
     <td><?php echo $row['name']; ?></td>
     <td><?php echo $row['email']; ?></td>
     <td><?php echo $row['course']; ?></td>
-    <td><a href="edit_student.php?id=<?php echo $row['id']; ?>">Edit</a>
-</td>
+    <td>
+    <a href="edit_student.php?id=<?php echo $row['id']; ?>">Edit</a> |
+
+    <a href="delete_student.php?id=<?php echo $row['id']; ?>"
+   onclick="return confirm('Are you sure you want to delete this student?');">
+   Delete
+</a>
+    </td>
 </tr>
 
 <?php

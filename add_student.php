@@ -1,63 +1,194 @@
 <?php
+include "session.php";
 include "db.php";
+include "includes/header.php"; 
+include "includes/sidebar.php";
+ 
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Student</title>
-</head>
-<body>
+<?php
+// Form Submit Code
+if(isset($_POST['submit']))
+{
 
-    <h2>Add Student</h2>
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $course = $_POST['course'];
 
-    <form action="" method="post">
-
-        <label>Name:</label><br>
-        <input type="text" name="name"><br><br>
-
-        <label>Email:</label><br>
-        <input type="email" name="email"><br><br>
-
-        <label>Course:</label><br>
-        <input type="text" name="course"><br><br>
-
-        <input type="submit" name="submit" value="Save Student">
-
-    </form>
-
-    <hr>
-
-    <?php
-
-    if(isset($_POST['submit'])) //isset() is used to check whether a variable is set and not null.
+    // Validation
+    if(empty($name) || empty($email) || empty($course))
     {
-        $name = $_POST['name'];
-        $email = $_POST['email'];
-        $course = $_POST['course'];
-
-        //Validation
-        if(empty($name)||empty($email)||empty($course))
-            {
-                echo "<p style='color:red;'>All feilds are required.</p>";
-            }
-            else
-                {
-                    $sql ="INSERT INTO students(name,email,course) VALUES('$name','$email','$course')";
-
-                    if(mysqli_query($conn,$sql))
-                        {
-                            echo "<p style='color:green;'>Student added Successfully.</p>";
-                        }
-                        else
-                            {
-                                echo "Error :". mysqli_error($conn);
-                            }
-
-                }
+        $error = "All fields are required.";
     }
+    else
+{
+// Check Duplicate Email
+$checkEmail = "SELECT * FROM students WHERE email='$email'";
+$emailResult = mysqli_query($conn, $checkEmail);
 
-    ?>
 
-</body>
-</html>
+if(mysqli_num_rows($emailResult) > 0)
+{
+    $error = "Email already exists.";
+}
+else
+{
+    $sql = "INSERT INTO students(name,email,course)
+            VALUES('$name','$email','$course')";
+
+    if(mysqli_query($conn,$sql))
+    {
+        header("Location: index.php?msg=added");
+        exit();
+    }
+    else
+    {
+        $error = mysqli_error($conn);
+    }
+}
+
+
+}
+
+}
+?>
+
+    <!-- Sidebar -->
+
+    <!-- Main Content -->
+
+    <div class="content">
+
+        <!-- Navbar -->
+    <?php include "includes/navbar.php"; ?>
+
+
+        <div class="container-fluid p-4">
+
+            <div class="row justify-content-center">
+
+                <div class="col-lg-8">
+
+                    <div class="card">
+
+                        <div class="card-header bg-primary text-white">
+
+                            <h4 class="mb-0">
+
+                                <i class="bi bi-person-plus-fill"></i>
+
+                                Add Student
+
+                            </h4>
+
+                        </div>
+
+                        <div class="card-body">
+
+                        <?php
+if(isset($error))
+{
+?>
+<div class="alert alert-danger">
+    <?php echo $error; ?>
+</div>
+<?php
+}
+?>
+
+                            <form action="" method="post">
+
+                                <div class="mb-3">
+
+                                    <label class="form-label fw-bold">
+
+                                        Student Name
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        class="form-control"
+                                        placeholder="Enter Student Name" required>
+
+                                </div>
+
+                                <div class="mb-3">
+
+                                    <label class="form-label fw-bold">
+
+                                        Email Address
+
+                                    </label>
+
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        class="form-control"
+                                        placeholder="Enter Email" required>
+
+                                </div>
+
+                                <div class="mb-4">
+
+                                    <label class="form-label fw-bold">
+
+                                        Course
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="course"
+                                        class="form-control"
+                                        placeholder="Enter Course" required>
+
+                                </div>
+                                                                <div class="d-flex gap-2">
+
+                                    <button type="submit"
+                                            name="submit"
+                                            class="btn btn-primary">
+
+                                        <i class="bi bi-check-circle"></i>
+
+                                        Save Student
+
+                                    </button>
+
+                                    <a href="index.php"
+                                       class="btn btn-secondary">
+
+                                        <i class="bi bi-arrow-left"></i>
+
+                                        Back
+
+                                    </a>
+
+                                </div>
+
+                            </form>
+
+                            <hr>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+   <!-- Footer -->
+        <?php include "includes/footer.php"; ?>
+
+    </div>
+
+</div>
+
+   
+        

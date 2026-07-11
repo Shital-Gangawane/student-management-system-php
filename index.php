@@ -1,360 +1,339 @@
-<?php
+<!DOCTYPE html>
+<html lang="en">
 
-include "session.php";
-// Database Connection
-include "db.php";
- include "includes/header.php";
- include "includes/sidebar.php"; 
- 
- ?>
+<head>
 
+<meta charset="UTF-8">
 
-<?php
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-// Total Students
-$count_sql = "SELECT COUNT(*) AS total FROM students";
-$count_result = mysqli_query($conn, $count_sql);
-$count_row = mysqli_fetch_assoc($count_result);
-$totalStudents = $count_row['total'];
+<title>Student Management System</title>
 
-// Total Courses
-$course_sql = "SELECT COUNT(DISTINCT course) AS total_courses FROM students";
-$course_result = mysqli_query($conn, $course_sql);
-$course_row = mysqli_fetch_assoc($course_result);
-$totalCourses = $course_row['total_courses'];
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
-$limit = 5;
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+<link rel="stylesheet" href="style.css">
 
-$start = ($page - 1) * $limit;
+<style>
 
-// Search Query
-$search = "";
-
-if (isset($_GET['search'])) {
-    $search = trim($_GET['search']);
-
-    $sql = "SELECT * FROM students
-            WHERE name LIKE '%$search%'
-            OR email LIKE '%$search%'
-            OR course LIKE '%$search%'
-            LIMIT $start, $limit";
-} else {
-   $sql = "SELECT * FROM students LIMIT $start, $limit";
+.hero{
+    background:linear-gradient(135deg,#0d6efd,#4f8cff);
+    color:white;
+    padding:100px 0;
 }
 
-//pagination
-// Total Records
-if (!empty($search)) {
-    $countQuery = "SELECT COUNT(*) AS total FROM students
-                   WHERE name LIKE '%$search%'
-                   OR email LIKE '%$search%'
-                   OR course LIKE '%$search%'";
-} else {
-    $countQuery = "SELECT COUNT(*) AS total FROM students";
+.feature-card{
+    transition:.3s;
+    border:none;
+    border-radius:16px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
 }
 
-$countResult = mysqli_query($conn, $countQuery);
-$countRow = mysqli_fetch_assoc($countResult);
+.feature-card:hover{
+    transform:translateY(-8px);
+}
 
-$totalRecords = $countRow['total'];
-$totalPages = ceil($totalRecords / $limit);
+</style>
 
+</head>
 
+<body>
 
-//Fetch Students
-$result = mysqli_query($conn, $sql);
+<!-- Navbar -->
 
-?>
+<nav class="navbar navbar-expand-lg bg-white shadow-sm">
 
-<!-- Sidebar -->
+<div class="container">
 
-<!-- Main Content -->
+<a class="navbar-brand fw-bold text-primary" href="#">
 
-<div class="content">
+<i class="bi bi-mortarboard-fill"></i>
 
-    <!-- Navbar -->
+Student MS
 
-    <?php include "includes/navbar.php"; ?>
+</a>
 
-    <div class="container-fluid p-4">
+<div class="ms-auto">
 
+<a href="login.php" class="btn btn-primary rounded-pill px-4">
 
-        <!-- Dashboard Card -->
+<i class="bi bi-box-arrow-in-right"></i>
 
-        <div class="row mb-4">
+Login
 
-            <div class="col-lg-4 col-md-6">
+</a>
 
-                <div class="card">
+</div>
 
-                    <div class="card-body">
-
-                        <div class="d-flex justify-content-between align-items-center">
-
-                            <div>
-
-                                <h6 class="text-muted">
-
-                                    Total Students
-
-                                </h6>
-
-                                <h2 class="fw-bold text-primary">
-
-                                    <?php echo $totalStudents; ?>
-
-                                </h2>
-
-                            </div>
-
-                            <div class="bg-primary text-white rounded-circle p-3">
-
-                                <i class="bi bi-people-fill fs-2"></i>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!---- Total Courses ----->
-
-            <div class="col-lg-4 col-md-6">
-
-                <div class="card">
-
-                    <div class="card-body">
-
-                        <div class="d-flex justify-content-between align-items-center">
-
-                            <div>
-
-                                <h6 class="text-muted">Total Courses</h6>
-
-                                <h2 class="fw-bold text-success">
-                                    <?php echo $totalCourses; ?>
-                                </h2>
-
-                            </div>
-
-                            <div class="bg-success text-white rounded-circle p-3">
-
-                                <i class="bi bi-book-fill fs-2"></i>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- alert --->
-        <?php include "includes/alerts.php"; ?>
-
-
-
-        <!-- Student Table -->
-
-        <div class="card">
-
-            <div class="card-header bg-white border-0 py-3">
-
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-
-                    <h4 class="mb-0 fw-bold">
-
-                        Student List
-
-                    </h4>
-
-                    <div class="d-flex align-items-center gap-2 flex-wrap">
-
-                        <!-- Search Form -->
-
-                        <form method="GET" class="d-flex">
-
-                            <input
-                                type="text"
-                                name="search"
-                                class="form-control"
-                                placeholder="Search Student..."
-                                value="<?php echo $search; ?>">
-
-                            <button class="btn btn-primary ms-2">
-
-                                <i class="bi bi-search"></i>
-
-                            </button>
-
-                        </form>
-
-                        <a href="add_student.php" class="btn btn-primary rounded-pill">
-
-                            <i class="bi bi-plus-circle"></i>
-
-                            Add Student
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="card-body">
-
-                <div class="table-responsive">
-
-                    <table class="table table-hover table-bordered align-middle text-center">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>ID</th>
-
-                                <th>Name</th>
-
-                                <th>Email</th>
-
-                                <th>Course</th>
-
-                                <th width="180">Action</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-                            <?php
-
-                            if (mysqli_num_rows($result) > 0) {
-                                while ($row = mysqli_fetch_assoc($result)) {
-                            ?>
-
-                                    <tr>
-
-                                        <td><?php echo $row['id']; ?></td>
-
-                                        <td><?php echo $row['name']; ?></td>
-
-                                        <td><?php echo $row['email']; ?></td>
-
-                                        <td><?php echo $row['course']; ?></td>
-
-                                        <td>
-
-                                            <a href="edit_student.php?id=<?php echo $row['id']; ?>"
-                                                class="btn btn-warning btn-sm rounded-pill">
-
-                                                <i class="bi bi-pencil-square"></i>
-                                                Edit
-
-                                            </a>
-
-                                            <a href="delete_student.php?id=<?php echo $row['id']; ?>"
-                                                class="btn btn-danger btn-sm rounded-pill"
-                                                onclick="return confirm('Are you sure you want to delete this student?');">
-
-                                                <i class="bi bi-trash-fill"></i>
-                                                Delete
-
-                                            </a>
-
-                                        </td>
-
-                                    </tr>
-
-                                <?php
-
-                                }
-                            } else {
-                                ?>
-
-                                <tr>
-
-                                    <td colspan="5" class="text-center text-danger fw-bold py-4">
-
-                                        <i class="bi bi-exclamation-circle"></i>
-
-                                        No Student Records Found
-
-                                    </td>
-
-                                </tr>
-
-                            <?php
-                            }
-                            ?>
-
-                        </tbody>
-
-                    </table>
-                    <!---- Pagination ----->
-                    <nav class="mt-3">
-    <ul class="pagination justify-content-center">
-
-    <?php if($page > 1){ ?>
-        <li class="page-item">
-            <a class="page-link"
-               href="?page=<?php echo $page-1; ?>&search=<?php echo $search; ?>">
-                Previous
-            </a>
-        </li>
-    <?php } ?>
-
-    <?php for($i=1; $i<=$totalPages; $i++){ ?>
-
-        <li class="page-item <?php echo ($page==$i) ? 'active' : ''; ?>">
-
-            <a class="page-link"
-               href="?page=<?php echo $i; ?>&search=<?php echo $search; ?>">
-                <?php echo $i; ?>
-            </a>
-
-        </li>
-
-    <?php } ?>
-
-    <?php if($page < $totalPages){ ?>
-        <li class="page-item">
-            <a class="page-link"
-               href="?page=<?php echo $page+1; ?>&search=<?php echo $search; ?>">
-                Next
-            </a>
-        </li>
-    <?php } ?>
-
-</ul>
-
+</div>
 
 </nav>
 
-                </div>
+<!-- Hero -->
 
-            </div>
+<section class="hero">
 
-        </div>
+<div class="container">
 
-        
+<div class="row align-items-center">
 
-    </div>
- 
+<div class="col-lg-6">
+
+<h1 class="display-4 fw-bold">
+
+Student Management System
+
+</h1>
+
+<p class="lead mt-3">
+
+Manage student records easily using PHP, MySQL and Bootstrap.
+
+This project supports CRUD operations, Search functionality,
+Responsive Dashboard and Authentication.
+
+</p>
+
+<a href="login.php" class="btn btn-light btn-lg mt-3">
+
+Get Started
+
+</a>
+
+</div>
+
+<div class="col-lg-6 text-center">
+
+<i class="bi bi-mortarboard-fill"
+style="font-size:220px;color:white;"></i>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- Features -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="text-center fw-bold mb-5">
+
+Project Features
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-md-4">
+
+<div class="card feature-card h-100">
+
+<div class="card-body text-center">
+
+<i class="bi bi-person-plus-fill text-primary fs-1"></i>
+
+<h4 class="mt-3">
+
+Student CRUD
+
+</h4>
+
+<p>
+
+Add, Edit, Delete and View Students easily.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="card feature-card h-100">
+
+<div class="card-body text-center">
+
+<i class="bi bi-search text-success fs-1"></i>
+
+<h4 class="mt-3">
+
+Search Student
+
+</h4>
+
+<p>
+
+Search students instantly by Name, Email or Course.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="card feature-card h-100">
+
+<div class="card-body text-center">
+
+<i class="bi bi-shield-lock-fill text-danger fs-1"></i>
+
+<h4 class="mt-3">
+
+Secure Login
+
+</h4>
+
+<p>
+
+Admin authentication with PHP Sessions.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+<!-- About Section -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<div class="row align-items-center">
+
+<div class="col-lg-6">
+
+<h2 class="fw-bold mb-4">
+
+About This Project
+
+</h2>
+
+<p class="text-muted">
+
+This Student Management System is developed using Core PHP,
+MySQL and Bootstrap 5. It helps administrators manage
+student records efficiently through a responsive and
+user-friendly dashboard.
+
+</p>
+
+<ul class="list-group list-group-flush">
+
+<li class="list-group-item">
+<i class="bi bi-check-circle-fill text-success"></i>
+Responsive Dashboard
+</li>
+
+<li class="list-group-item">
+<i class="bi bi-check-circle-fill text-success"></i>
+Complete CRUD Operations
+</li>
+
+<li class="list-group-item">
+<i class="bi bi-check-circle-fill text-success"></i>
+Search Functionality
+</li>
+
+<li class="list-group-item">
+<i class="bi bi-check-circle-fill text-success"></i>
+Secure Admin Login
+</li>
+
+</ul>
+
+</div>
+
+<div class="col-lg-6 text-center">
+
+<i class="bi bi-laptop text-primary"
+style="font-size:180px;"></i>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- Call To Action -->
+
+<section class="py-5 text-center">
+
+<div class="container">
+
+<h2 class="fw-bold">
+
+Ready to Manage Students?
+
+</h2>
+
+<p class="text-muted mt-3">
+
+Login to access the admin dashboard and manage student records.
+
+</p>
+
+<a href="login.php" class="btn btn-primary btn-lg rounded-pill px-5 mt-3">
+
+<i class="bi bi-box-arrow-in-right"></i>
+
+Login Now
+
+</a>
+
+</div>
+
+</section>
+
 <!-- Footer -->
-        <?php include "includes/footer.php"; ?>
+
+<footer class="bg-primary text-white py-4">
+
+<div class="container text-center">
+
+<p class="mb-1">
+
+© <?php echo date("Y"); ?>
+
+Student Management System
+
+</p>
+
+<small>
+
+Developed using PHP, MySQL & Bootstrap 5
+
+</small>
 
 </div>
 
-</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

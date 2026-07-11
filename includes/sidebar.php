@@ -14,7 +14,7 @@
 
                 <li class="nav-item">
 
-                    <a href="index.php" class="nav-link active">
+                    <a href="dashboard.php" class="nav-link active">
 
                         <i class="bi bi-speedometer2 me-2"></i>
 

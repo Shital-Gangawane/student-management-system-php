@@ -23,7 +23,7 @@ if(isset($_POST['update']))
 
     if(mysqli_query($conn, $sql))
 {
-    header("Location: index.php?msg=updated");
+    header("Location: dashboard.php?msg=updated");
     exit();
 }
 else
@@ -146,7 +146,7 @@ required>
 
                                     </button>
 
-                                    <a href="index.php"
+                                    <a href="dashboard.php"
                                        class="btn btn-secondary">
 
                                         <i class="bi bi-arrow-left"></i>

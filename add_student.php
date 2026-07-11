@@ -38,7 +38,7 @@ else
 
     if(mysqli_query($conn,$sql))
     {
-        header("Location: index.php?msg=added");
+        header("Location: dashboard.php?msg=added");
         exit();
     }
     else
@@ -157,7 +157,7 @@ if(isset($error))
 
                                     </button>
 
-                                    <a href="index.php"
+                                    <a href="dashboard.php"
                                        class="btn btn-secondary">
 
                                         <i class="bi bi-arrow-left"></i>

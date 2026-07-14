@@ -3,10 +3,10 @@
 include "session.php";
 // Database Connection
 include "db.php";
- include "includes/header.php";
- include "includes/sidebar.php"; 
- 
- ?>
+include "includes/header.php";
+include "includes/sidebar.php";
+
+?>
 
 
 <?php
@@ -41,7 +41,7 @@ if (isset($_GET['search'])) {
             OR course LIKE '%$search%'
             LIMIT $start, $limit";
 } else {
-   $sql = "SELECT * FROM students LIMIT $start, $limit";
+    $sql = "SELECT * FROM students LIMIT $start, $limit";
 }
 
 //pagination
@@ -225,6 +225,8 @@ $result = mysqli_query($conn, $sql);
 
                                 <th>SR No.</th>
 
+                                <th>Photo</th>
+
                                 <th>Name</th>
 
                                 <th>Email</th>
@@ -249,8 +251,14 @@ $result = mysqli_query($conn, $sql);
                                     <tr>
 
                                         <!-- <td><?php echo $row['id']; ?></td> -->
-                                         <td><?php echo $sr++; ?></td>
-
+                                        <td><?php echo $sr++; ?></td>
+                                        <td>
+                                            <?php if (!empty($row['photo'])) { ?>
+                                                <img src="assets/uploads/<?php echo $row['photo']; ?>" width="50" height="50" style="border-radius:10%; object-fit:cover;">
+                                            <?php } else { ?>
+                                                No Photo
+                                            <?php } ?>
+                                        </td>
                                         <td><?php echo $row['name']; ?></td>
 
                                         <td><?php echo $row['email']; ?></td>
@@ -260,14 +268,14 @@ $result = mysqli_query($conn, $sql);
                                         <td>
 
                                             <a href="edit_student.php?id=<?php echo $row['id']; ?>"
-                                               class="btn btn-outline-primary btn-sm me-2">
+                                                class="btn btn-outline-primary btn-sm me-2">
                                                 <i class="bi bi-pencil-square"></i>
                                                 Edit
 
                                             </a>
 
                                             <a href="delete_student.php?id=<?php echo $row['id']; ?>"
-                                               class="btn btn-outline-danger btn-sm"
+                                                class="btn btn-outline-danger btn-sm"
                                                 onclick="return confirm('Are you sure you want to delete this student?');">
 
                                                 <i class="bi bi-trash-fill"></i>
@@ -306,43 +314,43 @@ $result = mysqli_query($conn, $sql);
                     </table>
                     <!---- Pagination ----->
                     <nav class="mt-3">
-    <ul class="pagination justify-content-center">
+                        <ul class="pagination justify-content-center">
 
-    <?php if($page > 1){ ?>
-        <li class="page-item">
-            <a class="page-link"
-               href="?page=<?php echo $page-1; ?>&search=<?php echo $search; ?>">
-                Previous
-            </a>
-        </li>
-    <?php } ?>
+                            <?php if ($page > 1) { ?>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="?page=<?php echo $page - 1; ?>&search=<?php echo $search; ?>">
+                                        Previous
+                                    </a>
+                                </li>
+                            <?php } ?>
 
-    <?php for($i=1; $i<=$totalPages; $i++){ ?>
+                            <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
 
-        <li class="page-item <?php echo ($page==$i) ? 'active' : ''; ?>">
+                                <li class="page-item <?php echo ($page == $i) ? 'active' : ''; ?>">
 
-            <a class="page-link"
-               href="?page=<?php echo $i; ?>&search=<?php echo $search; ?>">
-                <?php echo $i; ?>
-            </a>
+                                    <a class="page-link"
+                                        href="?page=<?php echo $i; ?>&search=<?php echo $search; ?>">
+                                        <?php echo $i; ?>
+                                    </a>
 
-        </li>
+                                </li>
 
-    <?php } ?>
+                            <?php } ?>
 
-    <?php if($page < $totalPages){ ?>
-        <li class="page-item">
-            <a class="page-link"
-               href="?page=<?php echo $page+1; ?>&search=<?php echo $search; ?>">
-                Next
-            </a>
-        </li>
-    <?php } ?>
+                            <?php if ($page < $totalPages) { ?>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="?page=<?php echo $page + 1; ?>&search=<?php echo $search; ?>">
+                                        Next
+                                    </a>
+                                </li>
+                            <?php } ?>
 
-</ul>
+                        </ul>
 
 
-</nav>
+                    </nav>
 
                 </div>
 
@@ -350,12 +358,12 @@ $result = mysqli_query($conn, $sql);
 
         </div>
 
-        
+
 
     </div>
- 
-<!-- Footer -->
-        <?php include "includes/footer.php"; ?>
+
+    <!-- Footer -->
+    <?php include "includes/footer.php"; ?>
 
 </div>
 

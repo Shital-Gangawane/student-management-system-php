@@ -1,179 +1,176 @@
 <?php
 include "session.php";
 include "db.php";
-include "includes/header.php"; 
+include "includes/header.php";
 include "includes/sidebar.php";
- 
+
 ?>
 
 <?php
 // Form Submit Code
-if(isset($_POST['submit']))
-{
+if (isset($_POST['submit'])) {
 
     $name = $_POST['name'];
     $email = $_POST['email'];
     $course = $_POST['course'];
+    $photo = "";
+
+    if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
+        $photo = time() . "_" . $_FILES['photo']['name'];
+        move_uploaded_file($_FILES['photo']['tmp_name'], "assets/uploads/".$photo);
+    }
 
     // Validation
-    if(empty($name) || empty($email) || empty($course))
-    {
+    if (empty($name) || empty($email) || empty($course)) {
         $error = "All fields are required.";
+    } else {
+        // Check Duplicate Email
+        $checkEmail = "SELECT * FROM students WHERE email='$email'";
+        $emailResult = mysqli_query($conn, $checkEmail);
+
+
+        if (mysqli_num_rows($emailResult) > 0) {
+            $error = "Email already exists.";
+        } else {
+            $sql = "INSERT INTO students(name,email,course,photo)
+            VALUES('$name','$email','$course','$photo')";
+
+            if (mysqli_query($conn, $sql)) {
+                header("Location: dashboard.php?msg=added");
+                exit();
+            } else {
+                $error = mysqli_error($conn);
+            }
+        }
     }
-    else
-{
-// Check Duplicate Email
-$checkEmail = "SELECT * FROM students WHERE email='$email'";
-$emailResult = mysqli_query($conn, $checkEmail);
-
-
-if(mysqli_num_rows($emailResult) > 0)
-{
-    $error = "Email already exists.";
-}
-else
-{
-    $sql = "INSERT INTO students(name,email,course)
-            VALUES('$name','$email','$course')";
-
-    if(mysqli_query($conn,$sql))
-    {
-        header("Location: dashboard.php?msg=added");
-        exit();
-    }
-    else
-    {
-        $error = mysqli_error($conn);
-    }
-}
-
-
-}
-
 }
 ?>
 
-    <!-- Sidebar -->
+<!-- Sidebar -->
 
-    <!-- Main Content -->
+<!-- Main Content -->
 
-    <div class="content">
+<div class="content">
 
-        <!-- Navbar -->
+    <!-- Navbar -->
     <?php include "includes/navbar.php"; ?>
 
 
-        <div class="container-fluid p-4">
+    <div class="container-fluid p-4">
 
-            <div class="row justify-content-center">
+        <div class="row justify-content-center">
 
-                <div class="col-lg-8">
+            <div class="col-lg-8">
 
-                    <div class="card">
+                <div class="card">
 
-                        <div class="card-header bg-primary text-white">
+                    <div class="card-header bg-primary text-white">
 
-                            <h4 class="mb-0">
+                        <h4 class="mb-0">
 
-                                <i class="bi bi-person-plus-fill"></i>
+                            <i class="bi bi-person-plus-fill"></i>
 
-                                Add Student
+                            Add Student
 
-                            </h4>
+                        </h4>
 
-                        </div>
+                    </div>
 
-                        <div class="card-body">
+                    <div class="card-body">
 
                         <?php
-if(isset($error))
-{
-?>
-<div class="alert alert-danger">
-    <?php echo $error; ?>
-</div>
-<?php
-}
-?>
+                        if (isset($error)) {
+                        ?>
+                            <div class="alert alert-danger">
+                                <?php echo $error; ?>
+                            </div>
+                        <?php
+                        }
+                        ?>
 
-                            <form action="" method="post">
+                        <form action="" method="post" enctype="multipart/form-data">
 
-                                <div class="mb-3">
+                           
+                            <div class="mb-3">
 
-                                    <label class="form-label fw-bold">
+                                <label class="form-label fw-bold">
 
-                                        Student Name
+                                    Student Name
 
-                                    </label>
+                                </label>
 
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        class="form-control"
-                                        placeholder="Enter Student Name" required>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    class="form-control"
+                                    placeholder="Enter Student Name" required>
 
-                                </div>
+                            </div>
 
-                                <div class="mb-3">
+                            <div class="mb-3">
 
-                                    <label class="form-label fw-bold">
+                                <label class="form-label fw-bold">
 
-                                        Email Address
+                                    Email Address
 
-                                    </label>
+                                </label>
 
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        class="form-control"
-                                        placeholder="Enter Email" required>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    class="form-control"
+                                    placeholder="Enter Email" required>
 
-                                </div>
+                            </div>
 
-                                <div class="mb-4">
+                            <div class="mb-4">
 
-                                    <label class="form-label fw-bold">
+                                <label class="form-label fw-bold">
 
-                                        Course
+                                    Course
 
-                                    </label>
+                                </label>
 
-                                    <input
-                                        type="text"
-                                        name="course"
-                                        class="form-control"
-                                        placeholder="Enter Course" required>
+                                <input
+                                    type="text"
+                                    name="course"
+                                    class="form-control"
+                                    placeholder="Enter Course" required>
 
-                                </div>
-                                                                <div class="d-flex gap-2">
+                            </div>
 
-                                    <button type="submit"
-                                            name="submit"
-                                            class="btn btn-primary">
+                             <div class="mb-3">
+                                <label class="form-label">Photo</label>
+                                <input type="file" name="photo" class="form-control" required>
+                            </div>
 
-                                        <i class="bi bi-check-circle"></i>
+                            <div class="d-flex gap-2">
 
-                                        Save Student
+                                <button type="submit"
+                                    name="submit"
+                                    class="btn btn-primary">
 
-                                    </button>
+                                    <i class="bi bi-check-circle"></i>
 
-                                    <a href="dashboard.php"
-                                       class="btn btn-secondary">
+                                    Save Student
 
-                                        <i class="bi bi-arrow-left"></i>
+                                </button>
 
-                                        Back
+                                <a href="dashboard.php"
+                                    class="btn btn-secondary">
 
-                                    </a>
+                                    <i class="bi bi-arrow-left"></i>
 
-                                </div>
+                                    Back
 
-                            </form>
+                                </a>
 
-                            <hr>
+                            </div>
 
+                        </form>
 
-                        </div>
+                        <hr>
+
 
                     </div>
 
@@ -181,14 +178,13 @@ if(isset($error))
 
             </div>
 
-
         </div>
-   <!-- Footer -->
-        <?php include "includes/footer.php"; ?>
+
 
     </div>
+    <!-- Footer -->
+    <?php include "includes/footer.php"; ?>
 
 </div>
 
-   
-        
+</div>

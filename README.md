@@ -10,6 +10,9 @@ A responsive Student Management System developed using PHP, MySQL, Bootstrap 5, 
 * ✏️ Edit Student Details
 * 🗑️ Delete Student
 * 🔍 Search Students
+* Student Photo Upload
+✅ Photo Update
+✅ Photo Delete
 * 📄 Pagination
 * 📊 Dashboard with Total Students & Total Courses
 * ✅ Duplicate Email Validation

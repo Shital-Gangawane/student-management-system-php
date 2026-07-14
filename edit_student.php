@@ -7,17 +7,36 @@ include "includes/sidebar.php";
 
 <?php
 // Update Student
+
 if(isset($_POST['update']))
 {
+    $result = mysqli_query($conn,"SELECT * FROM students WHERE id=".$_POST['id']);
+$row = mysqli_fetch_assoc($result);
+
     $id = $_POST['id'];
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
     $course = trim($_POST['course']);
+    $photo = $row['photo'];
+      // Photo upload code...
+
+if(isset($_FILES['photo']) && $_FILES['photo']['error'] == 0)
+{
+    if(!empty($row['photo']) && file_exists("assets/uploads/".$row['photo']))
+    {
+        unlink("assets/uploads/".$row['photo']);
+    }
+
+    $photo = time()."_".$_FILES['photo']['name'];
+
+    move_uploaded_file($_FILES['photo']['tmp_name'], "assets/uploads/".$photo);
+}
 
     $sql = "UPDATE students
             SET name='$name',
                 email='$email',
-                course='$course'
+                course='$course',
+                photo='$photo'
             WHERE id=$id";
 
 
@@ -76,7 +95,7 @@ Update Student
 
 <div class="card-body">
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
 
 <input
 type="hidden"
@@ -133,6 +152,21 @@ value="<?php echo $row['course']; ?>"
 required>
 
 </div>
+
+<div class="mb-3">
+    <label class="form-label">Current Photo</label><br>
+
+    <?php if(!empty($row['photo'])) { ?>
+    <img src="assets/uploads/<?php echo $row['photo']; ?>" width="80" height="80" style="border-radius:50%; object-fit:cover;" >
+<?php } ?>
+
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Change Photo</label>
+    <input type="file" name="photo" class="form-control">
+</div>
+
                                 <div class="d-flex gap-2">
 
                                     <button

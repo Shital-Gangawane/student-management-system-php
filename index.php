@@ -14,28 +14,9 @@
 <link rel="stylesheet"
 href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="assets//css/style.css">
 
-<style>
 
-.hero{
-    background:linear-gradient(135deg,#0d6efd,#4f8cff);
-    color:white;
-    padding:100px 0;
-}
-
-.feature-card{
-    transition:.3s;
-    border:none;
-    border-radius:16px;
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
-}
-
-.feature-card:hover{
-    transform:translateY(-8px);
-}
-
-</style>
 
 </head>
 

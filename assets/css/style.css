@@ -2,6 +2,24 @@
    Global Styles
 =========================== */
 
+.hero{
+    background:linear-gradient(135deg,#0d6efd,#4f8cff);
+    color:white;
+    padding:100px 0;
+}
+
+.feature-card{
+    transition:.3s;
+    border:none;
+    border-radius:16px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.feature-card:hover{
+    transform:translateY(-8px);
+}
+
+
 body{
     background:#f5f7fb;
     overflow-x:hidden;
